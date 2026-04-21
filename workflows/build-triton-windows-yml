@@ -1,0 +1,37 @@
+name: Build Triton 2.2.0 Windows wheel
+
+on:
+  workflow_dispatch:  
+
+jobs:
+  build:
+    runs-on: windows-2022
+
+    steps:
+      - name: Configurar Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Instalar dependencias de compilación
+        run: |
+          pip install cmake ninja wheel setuptools pybind11
+
+      - name: Clonar Triton 2.2.0
+        run: |
+          git clone --branch v2.2.0 https://github.com/openai/triton.git
+          cd triton
+          git submodule update --init --recursive
+
+      - name: Compilar el wheel
+        run: |
+          cd triton/python
+          pip wheel . --no-build-isolation -w ../../dist/
+        env:
+          CMAKE_GENERATOR: "Visual Studio 17 2022"
+
+      - name: Subir el .whl como artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: triton-2.2.0-cp310-win
+          path: dist/*.whl
