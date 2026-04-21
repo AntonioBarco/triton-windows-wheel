@@ -19,7 +19,7 @@ jobs:
 
       - name: Clonar Triton 2.2.0
         run: |
-          git clone --branch v2.2.0 https://github.com/openai/triton.git
+          git clone --branch 2.2.0 https://github.com/openai/triton.git
           cd triton
           git submodule update --init --recursive
 
